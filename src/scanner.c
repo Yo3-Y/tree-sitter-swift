@@ -1,5 +1,7 @@
 #include "tree_sitter/parser.h"
+#ifndef __wasm__
 #include <stdio.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <wctype.h>
@@ -282,8 +284,12 @@ struct ScannerState {
 void *tree_sitter_swift_external_scanner_create() {
     void *payload = calloc(1, sizeof(struct ScannerState));
     if (!payload) {
+#ifdef __wasm__
+        __builtin_trap();
+#else
         fprintf(stderr, "tree-sitter-swift: out of memory allocating scanner state\n");
         exit(1);
+#endif
     }
     return payload;
 }
